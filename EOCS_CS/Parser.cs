@@ -12,7 +12,7 @@ namespace EOCS_CS
         public Parser(string[] contents)
         {
             originalContent = contents;
-            currentIndex = 0;
+            currentIndex = -1;
             RemoveCommentsAndWhitespaces();
         }
 
@@ -27,6 +27,13 @@ namespace EOCS_CS
             {
                 currentIndex++;
             }
+        }
+
+        public string CurrentRawLine()
+        {
+            return currentIndex >= content.Count
+                       ? ""
+                       : content[currentIndex];
         }
 
         public Commands CommandType()
@@ -61,26 +68,30 @@ namespace EOCS_CS
 
         private void RemoveCommentsAndWhitespaces()
         {
-            string cleanLine;
-
             foreach (var line in originalContent)
             {
-                cleanLine = RemoveComments(line);
+                var cleanLine = RemoveComments(line);
+                cleanLine = RemoveWhitespaces(cleanLine);
+
                 if (cleanLine != "")
                     content.Add(cleanLine);
             }
-
         }
 
         private string RemoveComments(string line)
         {
-            var index = line.IndexOf("//", System.StringComparison.OrdinalIgnoreCase);
+            var index = line.IndexOf("//", StringComparison.OrdinalIgnoreCase);
             if (index > -1)
             {
                 line = line.Remove(index);
             }
 
             return line;
+        }
+
+        private string RemoveWhitespaces(string line)
+        {
+            return line == null ? "" : line.Replace(" ", "");
         }
     }
 }
